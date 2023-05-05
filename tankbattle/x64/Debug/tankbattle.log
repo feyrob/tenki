@@ -1,3 +1,0 @@
-﻿  main.cpp
-C:\Users\hutto\Downloads\repos\tankbattle\tankbattle\summerjam.h(95,28): warning C4091: 'typedef ': ignored on left of 'RenderBuffer' when no variable is declared
-  tankbattle.vcxproj -> C:\Users\hutto\Downloads\repos\tankbattle\x64\Debug\tankbattle.exe
