@@ -1783,7 +1783,6 @@ Input_State UpdateBot(Gameplay_Data data, int player_number)
 #define DRAG_FACTOR 2.0f
 #define TANK_SPEED 10.0f
 #define TANK_ROTATION_SPEED 0.015f
-#define TURRET_ROTATION_SPEED 0.03f
 #define FIRE_COOLDOWN 0.1f
 
 void update_player(Gameplay_Data* data, Tank* tank, Input_State Input, f32 dt)
