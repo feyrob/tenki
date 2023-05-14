@@ -1445,8 +1445,8 @@ static void InitGameObjecets(Game_Memory* memory)
 			if (r == 0 && g == 0 && b == 0)
 			{
 				data->blocks[count].pos = { (f32)j, (f32)i };
-				data->blocks[count].width = 1.00f;
-				data->blocks[count].height = 1.00f;
+				data->blocks[count].width = 0.5f;
+				data->blocks[count].height = 0.5f;
 				data->blocks[count].color = { 1.0f, 1.0f, 1.0f, 1.0f };
 				data->blocks[count].is_active = true;
 				data->blocks[count].health = 200;
@@ -1823,11 +1823,11 @@ void update_player(Gameplay_Data* data, Tank* tank, Input_State Input, f32 dt)
 	}
 	else acceleration = { 0.0f, 0.f };
 
-	f32 dragX = -DRAG_FACTOR * player->velocity.x;
-	acceleration.x += dragX;
+	f32 dragX = DRAG_FACTOR * player->velocity.x;
+	acceleration.x -= dragX;
 
-	f32 dragY = -DRAG_FACTOR * player->velocity.y;
-	acceleration.y += dragY;
+	f32 dragY = DRAG_FACTOR * player->velocity.y;
+	acceleration.y -= dragY;
 
 	player->velocity.x += acceleration.x * dt;
 	player->velocity.y += acceleration.y * dt;
@@ -1943,26 +1943,30 @@ void UpdateGamePlay(Gameplay_Data* data, Input_State Input, Input_State Input2, 
 		{
 			if (!data->bullets[i].is_active) continue;
 			
+			// blocks
 			if (Is_Penetration_Naive(data->bullets[i], data->blocks[j]) && data->blocks[j].is_active)
 			{
 				data->bullets[i].is_active = false;
-				data->blocks[j].health -= 10;
+				data->blocks[j].health -= 20;
 				if (data->blocks[j].health <= 0)
 					data->blocks[j].is_active = false;
 			}
 
+			// tank 1
 			if (Is_Penetration_Naive(data->bullets[i], data->player1.ent) && data->player1.ent.is_active)
 			{
 				data->bullets[i].is_active = false;
 				data->player1.ent.health -= 10;
 			}
 
+			// tank 2
 			if (Is_Penetration_Naive(data->bullets[i], data->player2.ent) && data->player2.ent.is_active)
 			{
 				data->bullets[i].is_active = false;
 				data->player2.ent.health -= 10;
 			}
 
+			// off screen
 			if (!Is_Penetration_Naive(data->bullets[i], screen_space))
 				data->bullets[i].is_active = false;
 		}
