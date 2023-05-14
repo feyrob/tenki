@@ -32,8 +32,8 @@ typedef uint64_t u64;
 typedef float f32;
 
 
-#define Kilobytes(Value) ((Value)*1024LL)
-#define Megabytes(Value) (Kilobytes(Value)*1024LL)
+#define KiB(Value) ((Value)*1024LL)
+#define MiB(Value) (KiB(Value)*1024LL)
 
 #define QUAD_BUFFER_SIZE 1024
 #define QUAD_BUFFER_MAX 256
@@ -2056,7 +2056,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	ToggleFullscreen(window);
 
 	Game_Memory memory = {};
-	memory.persistent_memory_size = Megabytes(16);
+	memory.persistent_memory_size = MiB(16);
 	memory.persistent_memory = VirtualAlloc(0, memory.persistent_memory_size,
 		MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 
