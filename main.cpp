@@ -1266,7 +1266,7 @@ static Texture Get_Texture(const char* path)
 	return load_image_with_stbi(Path);
 }
 
-static void Win32ProcessPendingMessages(Input_State& input_result)
+static void Win32ProcessPendingMessages(Input_State& input_result, Input_State& player2_input)
 {
 	MSG message;
 	while (PeekMessage(&message, 0, 0, 0, PM_REMOVE))
@@ -1306,17 +1306,25 @@ static void Win32ProcessPendingMessages(Input_State& input_result)
 					
 					} break;
 
+					// player 1
 					case 'W': { Win32ProcessKeyboardButton(&input_result.MoveUp, IsDown); } break;
 					case 'A': { Win32ProcessKeyboardButton(&input_result.MoveLeft, IsDown); } break;
 					case 'S': { Win32ProcessKeyboardButton(&input_result.MoveDown, IsDown); } break;
 					case 'D': { Win32ProcessKeyboardButton(&input_result.MoveRight, IsDown); } break;
+					case VK_SPACE: { Win32ProcessKeyboardButton(&input_result.ActionDown, IsDown); } break;
+
 					case 'Q': { Win32ProcessKeyboardButton(&input_result.LeftShoulder, IsDown); } break;
 					case 'E': { Win32ProcessKeyboardButton(&input_result.RightShoulder, IsDown); } break;
-					case VK_UP: { Win32ProcessKeyboardButton(&input_result.ActionUp, IsDown); } break;
-					case VK_LEFT: { Win32ProcessKeyboardButton(&input_result.ActionLeft, IsDown); } break;
-					case VK_RIGHT: { Win32ProcessKeyboardButton(&input_result.ActionRight, IsDown); } break;
+
+					// player 2
+					case VK_UP: { Win32ProcessKeyboardButton(&player2_input.MoveUp, IsDown); } break;
+					case VK_LEFT: { Win32ProcessKeyboardButton(&player2_input.MoveLeft, IsDown); } break;
+					case VK_DOWN: { Win32ProcessKeyboardButton(&player2_input.MoveDown, IsDown); } break;
+					case VK_RIGHT: { Win32ProcessKeyboardButton(&player2_input.MoveRight, IsDown); } break;
+					case VK_CONTROL: { Win32ProcessKeyboardButton(&player2_input.ActionDown, IsDown); } break;
+
 					case VK_ESCAPE: { Win32ProcessKeyboardButton(&input_result.Back, IsDown); } break;
-					case VK_SPACE: { Win32ProcessKeyboardButton(&input_result.ActionDown, IsDown); } break;
+					
 				}
 			}
 		} break;
@@ -1780,8 +1788,8 @@ Input_State UpdateBot(Gameplay_Data data, int player_number)
 	return input_state;
 }
 
-#define DRAG_FACTOR 1.5f
-#define TANK_SPEED 10.0f
+#define DRAG_FACTOR 2.5f
+#define TANK_SPEED 15.0f
 #define BULLET_SPEED 9.0f
 #define TANK_ROTATION_SPEED 0.025f
 #define FIRE_COOLDOWN 0.1f
@@ -2116,7 +2124,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		{
 			input_state.Buttons[i].HalfTransitionCount = 0;
 		}
-		Win32ProcessPendingMessages(input_state);
+		Win32ProcessPendingMessages(input_state, input_state2);
 		Old_XInputState = XInputState;
 		DWORD xinput_result = Win32XInputGetState(0, &XInputState);
 		if (xinput_result == ERROR_SUCCESS)
@@ -2125,7 +2133,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 		Gameplay_Data* data = (Gameplay_Data*)memory.persistent_memory;
 		
-		input_state2 = UpdateBot(*data, 2);
+		//input_state2 = UpdateBot(*data, 2);
 
 		UpdateGamePlay(data, input_state, input_state2, TargetSeconds);
 		RenderGameplay(data);
