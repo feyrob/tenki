@@ -1780,7 +1780,7 @@ Input_State UpdateBot(Gameplay_Data data, int player_number)
 	return input_state;
 }
 
-#define DRAG_FACTOR 4.0f
+#define DRAG_FACTOR 2.0f
 #define TANK_SPEED 10.0f
 #define TANK_ROTATION_SPEED 0.015f
 #define TURRET_ROTATION_SPEED 0.03f
