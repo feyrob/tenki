@@ -38,14 +38,6 @@ typedef float f32;
 #define QUAD_BUFFER_SIZE 1024
 #define QUAD_BUFFER_MAX 256
 
-
-inline u32
-RoundF32ToUint32(f32 Value)
-{
-	u32 Result = (u32)_mm_cvtss_si32(_mm_set_ss(Value));
-	return Result;
-}
-
 typedef struct Game_Memory
 {
 	u64 persistent_memory_size;
