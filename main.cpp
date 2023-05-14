@@ -1831,8 +1831,8 @@ void update_player(Gameplay_Data* data, Tank* tank, Input_State Input, f32 dt)
 
 	player->velocity.x += acceleration.x * dt;
 	player->velocity.y += acceleration.y * dt;
-
-	if (WasPressed(Input.ActionDown) && tank->fire_timer <= 0.0f)
+		
+	if (Input.ActionDown.ended_down && tank->fire_timer <= 0.0f)
 	{
 		//fire bullet
 		for (int i = 0; i < NUM_BULLETS; i++)
