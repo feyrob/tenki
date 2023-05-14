@@ -1780,9 +1780,10 @@ Input_State UpdateBot(Gameplay_Data data, int player_number)
 	return input_state;
 }
 
-#define DRAG_FACTOR 2.0f
+#define DRAG_FACTOR 1.5f
 #define TANK_SPEED 10.0f
-#define TANK_ROTATION_SPEED 0.015f
+#define BULLET_SPEED 9.0f
+#define TANK_ROTATION_SPEED 0.025f
 #define FIRE_COOLDOWN 0.1f
 
 void update_player(Gameplay_Data* data, Tank* tank, Input_State Input, f32 dt)
@@ -1843,7 +1844,7 @@ void update_player(Gameplay_Data* data, Tank* tank, Input_State Input, f32 dt)
 			Vector2 up = { 0.f, 1.f };
 			Vector2 bearing = Rotate(up, player->rotation);
 			data->bullets[i].pos += bearing * 1.2f;
-			data->bullets[i].velocity = (bearing * 15.0f);
+			data->bullets[i].velocity = (bearing * BULLET_SPEED);
 			data->bullets[i].velocity += player->velocity;
 			break;
 		}
