@@ -1153,7 +1153,7 @@ static void reset_quad_buffers(RenderBuffer* buffer)
 	buffer->buffer_count = 0;
 }
 
-static bool GlobalRunning = true;
+static bool keep_running = true;
 
 LRESULT CALLBACK MainWindowCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -1166,12 +1166,12 @@ LRESULT CALLBACK MainWindowCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 
 	case WM_DESTROY:
 	{
-		GlobalRunning = false;
+		keep_running = false;
 	} break;
 
 	case WM_CLOSE:
 	{
-		GlobalRunning = false;
+		keep_running = false;
 	} break;
 
 	case WM_ACTIVATEAPP:
@@ -1275,7 +1275,7 @@ static void Win32ProcessPendingMessages(Input_State& input_result)
 		{
 		case WM_QUIT:
 		{
-			GlobalRunning = false;
+			keep_running = false;
 		} break;
 
 		case WM_SYSKEYDOWN:
@@ -1294,7 +1294,7 @@ static void Win32ProcessPendingMessages(Input_State& input_result)
 				{
 					case VK_F4: {
 						if (IsDown && AltKeyWasDown) {
-							GlobalRunning = false;
+							keep_running = false;
 						}
 					}break;
 					case VK_F11:
@@ -1345,7 +1345,6 @@ typedef struct Entity {
 	Color color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	bool is_active = true;
 	int health = 100;
-	f32 t_rot;
 } Entity;
 
 typedef struct Tank {
@@ -1811,20 +1810,6 @@ void update_player(Gameplay_Data* data, Tank* tank, Input_State Input, f32 dt)
 	if (player->rotation < -M_PI)
 		player->rotation += 2 * M_PI;
 
-	if (Input.ActionLeft.ended_down)
-	{
-		player->t_rot -= TURRET_ROTATION_SPEED;
-	}
-	else if (Input.ActionRight.ended_down)
-	{
-		player->t_rot += TURRET_ROTATION_SPEED;
-	}
-
-	if (player->t_rot >=  M_PI)
-		player->t_rot -= 2 * M_PI;
-	if (player->t_rot < - M_PI) 
-		player->t_rot += 2 * M_PI;
-
 	Vector2 north = { 0.f, 1.f };
 	Vector2 forward = Rotate(north, player->rotation);
 
@@ -1857,7 +1842,7 @@ void update_player(Gameplay_Data* data, Tank* tank, Input_State Input, f32 dt)
 			data->bullets[i].is_active = true;
 			data->bullets[i].pos = player->pos;
 			Vector2 up = { 0.f, 1.f };
-			Vector2 bearing = Rotate(up, player->rotation + player->t_rot);
+			Vector2 bearing = Rotate(up, player->rotation);
 			data->bullets[i].pos += bearing * 1.1f;
 			data->bullets[i].velocity = (bearing * 15.0f);
 			data->bullets[i].velocity += player->velocity;
@@ -1992,14 +1977,30 @@ void RenderGameplay(Gameplay_Data* data)
 	if (data->player1.ent.is_active)
 	{
 		add_quad_to_render_buffer(make_quad_from_entity(data->player1.ent), data->tank_texture.handle);
-		add_quad_to_render_buffer(make_quad(data->player1.ent.pos.x, data->player1.ent.pos.y, 1.0f, 1.0f,
-			data->player1.ent.t_rot + data->player1.ent.rotation), data->turret_texture.handle);
+		add_quad_to_render_buffer(
+			make_quad(
+				data->player1.ent.pos.x, 
+				data->player1.ent.pos.y, 
+				1.0f, 
+				1.0f,
+				data->player1.ent.rotation
+			), 
+			data->turret_texture.handle
+		);
 	}
 	if (data->player2.ent.is_active)
 	{
 		add_quad_to_render_buffer(make_quad_from_entity(data->player2.ent), data->tank_texture.handle);
-		add_quad_to_render_buffer(make_quad(data->player2.ent.pos.x, data->player2.ent.pos.y, 1.0f, 1.0f,
-			data->player2.ent.t_rot + data->player2.ent.rotation), data->turret_texture.handle);
+		add_quad_to_render_buffer(
+			make_quad(
+				data->player2.ent.pos.x, 
+				data->player2.ent.pos.y, 
+				1.0f, 
+				1.0f,
+				data->player2.ent.rotation
+			), 
+			data->turret_texture.handle
+		);
 	}
 	for (int i = 0; i < data->block_count; i++)
 	{
@@ -2103,7 +2104,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	InitGameObjecets(&memory);
 
-	while (GlobalRunning)
+	while (keep_running)
 	{
 		//input handling
 		for (int i = 0; i < NUM_BUTTONS; i++)
