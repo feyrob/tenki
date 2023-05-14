@@ -21,14 +21,14 @@
 
 #define ArrayCount(Array) (sizeof(Array) / sizeof((Array)[0]))
 
-typedef int8_t int8;
-typedef uint8_t uint8;
-typedef int16_t int16;
-typedef uint16_t uint16;
-typedef int32_t int32;
-typedef uint32_t uint32;
-typedef int64_t int64;
-typedef uint64_t uint64;
+typedef int8_t s8;
+typedef uint8_t u8;
+typedef int16_t s16;
+typedef uint16_t u16;
+typedef int32_t s32;
+typedef uint32_t u32;
+typedef int64_t s64;
+typedef uint64_t u64;
 typedef float f32;
 
 
@@ -39,16 +39,16 @@ typedef float f32;
 #define QUAD_BUFFER_MAX 256
 
 
-inline uint32
+inline u32
 RoundF32ToUint32(f32 Value)
 {
-	uint32 Result = (uint32)_mm_cvtss_si32(_mm_set_ss(Value));
+	u32 Result = (u32)_mm_cvtss_si32(_mm_set_ss(Value));
 	return Result;
 }
 
 typedef struct Game_Memory
 {
-	uint64 persistent_memory_size;
+	u64 persistent_memory_size;
 	void* persistent_memory;
 } Game_Memory;
 
@@ -141,12 +141,12 @@ typedef struct texture_data {
 
 typedef struct Texture {
 	int width, height;
-	uint32 handle;
+	u32 handle;
 } Texture;
 
 struct read_file_result
 {
-	uint32 dataSize;
+	u32 dataSize;
 	void* data;
 };
 
@@ -156,14 +156,14 @@ typedef texture_data load_texture_data(char* file_name);
 
 typedef struct button_state
 {
-	int32 HalfTransitionCount;
+	s32 HalfTransitionCount;
 	bool ended_down;
 } button_state;
 
 inline void * Copy(size_t size, void* sourceInit, void* destInit)
 {
-	uint8* source = (uint8*)sourceInit;
-	uint8* dest = (uint8*)destInit;
+	u8* source = (u8*)sourceInit;
+	u8* dest = (u8*)destInit;
 	while (size--) { *dest++ = *source++; }
 
 	return destInit;
@@ -183,7 +183,7 @@ static f32 clamp(f32 in, f32 clamp)
 	return out;
 }
 
-static int32 clamp_min_max(int32 min, int32 value, int32 max)
+static s32 clamp_min_max(s32 min, s32 value, s32 max)
 {
 	if (value < min) return min;
 	if (value > max) return max;
@@ -227,14 +227,14 @@ static f32 maxf(f32 a, f32 b)
 	return a > b ? a : b;
 }
 
-static int32 maxint32(int32 a, int32 b)
+static s32 maxint32(s32 a, s32 b)
 {
 	return a > b ? a : b;
 }
 
 static f32 round_down_to_dp(f32 num, int dp)
 {
-	uint32 pow = 1;
+	u32 pow = 1;
 	for (int i = 0; i < dp; i++)
 	{
 		pow = pow * 10;
@@ -247,7 +247,7 @@ static f32 round_down_to_dp(f32 num, int dp)
 
 static f32 round_up_to_dp(f32 num, int dp)
 {
-	uint32 pow = 1;
+	u32 pow = 1;
 	for (int i = 0; i < dp; i++)
 	{
 		pow = pow * 10;
@@ -260,7 +260,7 @@ static f32 round_up_to_dp(f32 num, int dp)
 
 static f32 round_to_dp(f32 num, int dp)
 {
-	uint32 pow = 1;
+	u32 pow = 1;
 	for (int i = 0; i < dp; i++)
 	{
 		pow = pow * 10;
@@ -317,9 +317,9 @@ typedef struct Input_State
 
 //todo(shutton) - probably make the quad buffer variable size at runtime
 typedef struct QuadBuffer {
-	uint32 texture_handle;
+	u32 texture_handle;
 	Quad quads[QUAD_BUFFER_SIZE];
-	uint32 quad_count = 0;
+	u32 quad_count = 0;
 } QuadBuffer;
 
 typedef struct RenderBuffer {
@@ -332,11 +332,11 @@ RenderBuffer global_render_buffer;
 
 char ExeFilePath[MAX_PATH];
 
-inline uint32
-SafeTruncateUInt64(uint64 Value)
+inline u32
+SafeTruncateUInt64(u64 Value)
 {
 	Assert(Value <= 0xFFFFFFFF);
-	uint32 Result = (uint32)Value;
+	u32 Result = (u32)Value;
 	return(Result);
 }
 
@@ -372,7 +372,7 @@ read_file_result win32_read_file(char* fileName)
 	LARGE_INTEGER FileSize;
 	if (GetFileSizeEx(fileHandle, &FileSize))
 	{
-		uint32 FileSize32 = SafeTruncateUInt64(FileSize.QuadPart);
+		u32 FileSize32 = SafeTruncateUInt64(FileSize.QuadPart);
 		result.data = VirtualAlloc(0, FileSize32, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 		if (result.data)
 		{
@@ -404,7 +404,7 @@ read_file_result win32_read_file_to_ntchar(char* fileName)
 		LARGE_INTEGER FileSize;
 	if (GetFileSizeEx(fileHandle, &FileSize))
 	{
-		uint32 FileSize32 = SafeTruncateUInt64(FileSize.QuadPart);
+		u32 FileSize32 = SafeTruncateUInt64(FileSize.QuadPart);
 		result.data = VirtualAlloc(0, FileSize32 + 1, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 		if (result.data)
 		{
@@ -679,15 +679,15 @@ static void MatrixTranslate44(float x, float y, float z, float mat[4][4])
 typedef HGLRC type_wglCreateContextAttribsARB(HDC hdc, HGLRC hShareContext, const int* attribsList);
 
 typedef void type_glEnableVertexAttribArray(GLuint index);
-typedef void type_glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, uint32 stride, const void* pointer);
+typedef void type_glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, u32 stride, const void* pointer);
 typedef void type_glDisableVertexAttribArray(GLuint index);
-typedef void type_glGenBuffers(uint32 n, GLuint* buffers);
+typedef void type_glGenBuffers(u32 n, GLuint* buffers);
 typedef void type_glBindBuffer(GLenum target, GLuint buffer);
-typedef void type_glBufferData(GLenum target, uint32 sizePtr, const void* data, GLenum usage);
+typedef void type_glBufferData(GLenum target, u32 sizePtr, const void* data, GLenum usage);
 
 //shader typedefs
 typedef GLuint type_glCreateShader(GLenum shaderType);
-typedef void type_glShaderSource(GLuint shader, uint32 count, char** string, const GLint* length);
+typedef void type_glShaderSource(GLuint shader, u32 count, char** string, const GLint* length);
 typedef void type_glCompileShader(GLuint shader);
 typedef GLuint type_glCreateProgram();
 typedef void type_glAttachShader(GLuint program, GLuint shader);
@@ -728,7 +728,7 @@ struct ogl_shader {
 	GLuint MVP_location;
 };
 
-static uint32 Global_Index_Buffer[QUAD_BUFFER_SIZE * 6];
+static u32 Global_Index_Buffer[QUAD_BUFFER_SIZE * 6];
 
 static GLuint GlobalQuadBufferHandle;
 static GLuint GlobalQuadIndexBufferHandle;
@@ -981,7 +981,7 @@ static void ogl_init_quad_buffers()
 	glGenBuffers(1, &GlobalQuadIndexBufferHandle);
 
 	//this never changes so it only needs to be set once at startup
-	for (uint32 i = 0; i < QUAD_BUFFER_SIZE; i++)
+	for (u32 i = 0; i < QUAD_BUFFER_SIZE; i++)
 	{
 		Global_Index_Buffer[(i * 6)] = (i * 4);
 		Global_Index_Buffer[(i * 6) + 1] = (i * 4) + 1;
@@ -992,8 +992,8 @@ static void ogl_init_quad_buffers()
 	}
 }
 
-static GLuint ogl_init_texture(uint32 textureWidth, uint32 textureHeight,
-	uint32 bytesPerPixel, void* textureBytes)
+static GLuint ogl_init_texture(u32 textureWidth, u32 textureHeight,
+	u32 bytesPerPixel, void* textureBytes)
 {
 	GLuint TextureHandle;
 
@@ -1067,7 +1067,7 @@ static void draw_quads(QuadBuffer* buffer)
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Quad) * quad_buffer.quad_count, quad_buffer.quads, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GlobalQuadIndexBufferHandle);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, (uint32)(6 * sizeof(uint32) * quad_buffer.quad_count),
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, (u32)(6 * sizeof(u32) * quad_buffer.quad_count),
 		Global_Index_Buffer, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
@@ -1112,7 +1112,7 @@ static void win32_ogl_render(HDC device_context, RenderBuffer* buffer)
 	SwapBuffers(device_context);
 }
 
-static void add_quad_to_render_buffer(Quad quad, uint32 texture_handle)
+static void add_quad_to_render_buffer(Quad quad, u32 texture_handle)
 {
 	int index = -1;
 	for (int i = 0; i < global_render_buffer.buffer_count; i++)
@@ -1284,7 +1284,7 @@ static void Win32ProcessPendingMessages(Input_State& input_result)
 		case WM_KEYDOWN:
 		case WM_KEYUP:
 		{
-			uint32 VKCode = (uint32)message.wParam;
+			u32 VKCode = (u32)message.wParam;
 			
 			bool AltKeyWasDown = (message.lParam & (1 << 29));
 			bool WasDown = ((message.lParam & (1 << 30)) != 0);
@@ -1434,12 +1434,12 @@ static void InitGameObjecets(Game_Memory* memory)
 	}
 
 	int count = 0;
-	uint8* cursor = (uint8*)data->map_tex.data;
+	u8* cursor = (u8*)data->map_tex.data;
 	for (int i = 0; i < data->map_tex.height; i++)
 	{
 		for (int j = 0; j < data->map_tex.width; j++)
 		{
-			uint8 r, g, b = 0;
+			u8 r, g, b = 0;
 			r = *cursor++;
 			g = *(cursor++);
 			b = *(cursor++);
@@ -1924,7 +1924,7 @@ void update_player(Gameplay_Data* data, Tank* tank, Input_State Input, f32 dt)
 		}
 
 		num_pens = 0;
-		for (uint32 i = 0; i < NUM_BLOCKS_MAP; i++)
+		for (u32 i = 0; i < NUM_BLOCKS_MAP; i++)
 		{
 			if (Is_Penetration(*player, data->blocks[i], pen))
 			{
