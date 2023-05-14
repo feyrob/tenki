@@ -314,7 +314,6 @@ typedef struct QuadBuffer {
 } QuadBuffer;
 
 typedef struct RenderBuffer {
-	Vector2 camera_pos;
 	int buffer_count;
 	QuadBuffer* quadBuffers[QUAD_BUFFER_MAX];
 } RenderBuffer;
@@ -1131,10 +1130,7 @@ static void add_quad_to_render_buffer(Quad quad, u32 texture_handle)
 	quad_buffer->quad_count += 1;
 }
 
-static void SetCameraPosition(Vector2 cameraPos)
-{
-	global_render_buffer.camera_pos = cameraPos;
-}
+
 
 static void reset_quad_buffers(RenderBuffer* buffer)
 {
@@ -1742,39 +1738,6 @@ bool is_in_block(Gameplay_Data* data, Vector2 point)
 	return false;
 }
 
-f32 get_bearing(const Vector2 from, const Vector2 to)
-{
-	Vector2 dir = from - to;
-	//atan2 expects y-axis to be down not up or vice versa. Which ever way it is it's the other way to this game.
-	f32 bearing = atan2f(-dir.y, dir.x);
-	if (bearing <= (-M_PI / 2)) {
-		bearing += 270.0f * ((f32)M_PI / 180.0f);
-	} else bearing -= 90.0f * ((f32)M_PI / 180.0f); //in Atan2 0 is in the direction of the positive X-axis. In this game 0 degrees is positive Y-axis.
-
-	return bearing;
-}
-
-void GetTankPointers(Tank** player, Tank** enemy, Gameplay_Data* data, int player_number) {
-	if (player_number == 1)
-	{
-		*player = &(data->player1);
-		*enemy = &(data->player2);
-	}
-	else
-	{
-		*player = &data->player2;
-		*enemy = &data->player1;
-	}
-}
-
-Input_State UpdateBot(Gameplay_Data data, int player_number)
-{
-	Input_State input_state = {};
-	Tank* player;
-	Tank* enemy;
-	GetTankPointers(&player, &enemy, &data, player_number);
-	return input_state;
-}
 
 #define DRAG_FACTOR 2.5f
 #define TANK_SPEED 15.0f
@@ -2120,8 +2083,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			get_gamepad_input(XInputState, Old_XInputState, input_state);
 		}
 		Gameplay_Data* data = (Gameplay_Data*)memory.persistent_memory;
-		
-		//input_state2 = UpdateBot(*data, 2);
+				
 
 		UpdateGamePlay(data, input_state, input_state2, TargetSeconds);
 		RenderGameplay(data);
