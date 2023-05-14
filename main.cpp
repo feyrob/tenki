@@ -1398,10 +1398,6 @@ static bool WasPressed(button_state State)
 	return Result;
 }
 
-#define PLAYER_GROUND_ACCELERATION 0.8f
-#define PLAYER_DRAG 3.0f
-#define MAX_VELOCITY 0.8f
-
 Entity screen_space;
 
 static void InitGameObjecets(Game_Memory* memory)
