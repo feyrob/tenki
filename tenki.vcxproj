@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{e36748f5-c17c-4ef9-8a7e-ca0b31e95314}</ProjectGuid>
-    <RootNamespace>Project2</RootNamespace>
+    <RootNamespace>tenki</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>tenki</ProjectName>
   </PropertyGroup>
