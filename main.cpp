@@ -1784,7 +1784,7 @@ Input_State UpdateBot(Gameplay_Data data, int player_number)
 #define TANK_SPEED 10.0f
 #define TANK_ROTATION_SPEED 0.015f
 #define TURRET_ROTATION_SPEED 0.03f
-#define FIRE_COOLDOWN 0.5f
+#define FIRE_COOLDOWN 0.1f
 
 void update_player(Gameplay_Data* data, Tank* tank, Input_State Input, f32 dt)
 {
@@ -1939,9 +1939,10 @@ void UpdateGamePlay(Gameplay_Data* data, Input_State Input, Input_State Input2, 
 	//update bullets
 	for (int i = 0; i < NUM_BULLETS; i++)
 	{
-		if (!data->bullets[i].is_active) continue;
 		for (int j = 0; j < data->block_count; j++)
 		{
+			if (!data->bullets[i].is_active) continue;
+			
 			if (Is_Penetration_Naive(data->bullets[i], data->blocks[j]) && data->blocks[j].is_active)
 			{
 				data->bullets[i].is_active = false;
